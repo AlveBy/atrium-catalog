@@ -186,10 +186,10 @@ class Product extends Model implements Administrable
             BelongsToManyField::make('related')->label(__('atrium-catalog::catalog.fields.related'))->model(self::class)->tab('params'),
 
             ImageField::make('preview_picture')->label(__('atrium::fields.standard.preview_picture'))->directory('catalog')->tab('preview'),
-            ContentField::make('preview_text')->label(__('atrium::fields.standard.preview_text'))->tab('preview'),
+            ContentField::make('preview_text')->label(__('atrium::fields.standard.preview_text'))->ai('preview', from: 'detail_text')->tab('preview'),
 
             ImageField::make('detail_picture')->label(__('atrium::fields.standard.detail_picture'))->directory('catalog')->tab('detail'),
-            ContentField::make('detail_text')->label(__('atrium::fields.standard.detail_text'))->tab('detail'),
+            ContentField::make('detail_text')->label(__('atrium::fields.standard.detail_text'))->ai()->tab('detail'),
             WysiwygField::make('specs')->label(__('atrium-catalog::catalog.fields.specs'))->tab('detail'),
             TextareaField::make('package')->label(__('atrium-catalog::catalog.fields.package'))->tab('detail'),
             GalleryField::make('photos')->label(__('atrium-catalog::catalog.fields.photos'))->directory('catalog')->tab('detail'),

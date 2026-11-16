@@ -55,7 +55,7 @@ final class DemoShopTest extends TestCase
             }
         }
 
-        $this->assertCount(20, $all);
+        $this->assertCount(21, $all);
         $this->assertSame([], array_values(array_diff($all, $used)));
     }
 

@@ -19,6 +19,7 @@ use Atrium\Admin\Fields\CheckboxField;
 use Atrium\Admin\Fields\ContentField;
 use Atrium\Admin\Fields\DateField;
 use Atrium\Admin\Fields\DateTimeField;
+use Atrium\Admin\Fields\DisplayField;
 use Atrium\Admin\Fields\FileField;
 use Atrium\Admin\Fields\GalleryField;
 use Atrium\Admin\Fields\ImageField;
@@ -189,6 +190,8 @@ class Product extends Model implements Administrable
             CheckboxField::make('in_stock')->label(__('atrium-catalog::catalog.fields.in_stock'))->checkedValue('Y')->tab('params'),
             RepeatableField::make('features')->label(__('atrium-catalog::catalog.fields.features'))->itemType('text')->maxItems(10)->tab('params'),
             BelongsToManyField::make('related')->label(__('atrium-catalog::catalog.fields.related'))->model(self::class)->tab('params'),
+            DisplayField::make('updated')->label(__('atrium::fields.standard.updated_at'))
+                ->html(fn (Model $product): string => $product instanceof self ? e($product->updated_at?->isoFormat('LLL') ?? '') : '')->tab('params'),
 
             ImageField::make('preview_picture')->label(__('atrium::fields.standard.preview_picture'))->directory('catalog')->tab('preview'),
             ContentField::make('preview_text')->label(__('atrium::fields.standard.preview_text'))->ai('preview', from: 'detail_text')->tab('preview'),

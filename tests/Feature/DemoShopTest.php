@@ -55,8 +55,11 @@ final class DemoShopTest extends TestCase
             }
         }
 
-        $this->assertCount(21, $all);
-        $this->assertSame([], array_values(array_diff($all, $used)));
+        // The menus module's form shows these two: a tree of items with links.
+        $elsewhere = ['tree', 'link'];
+
+        $this->assertCount(23, $all);
+        $this->assertSame([], array_values(array_diff($all, $used, $elsewhere)));
     }
 
     public function test_every_demo_module_opens_in_the_admin(): void

@@ -44,4 +44,8 @@ return [
             'pink' => 'Pushti',
         ],
     ],
+    'settings' => [
+        'per_page' => 'Sahifadagi mahsulotlar',
+        'per_page_hint' => 'Ushbu saytda katalog bo‘limining sahifasi nechta mahsulot ko‘rsatadi. Bo‘sh: mavzuning standart qiymati.',
+    ],
 ];

@@ -44,4 +44,8 @@ return [
             'pink' => 'Rose',
         ],
     ],
+    'settings' => [
+        'per_page' => 'Produits par page',
+        'per_page_hint' => 'Combien de produits une page de rubrique du catalogue affiche sur ce site. Vide : la valeur par défaut du thème.',
+    ],
 ];

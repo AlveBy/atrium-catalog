@@ -44,4 +44,8 @@ return [
             'pink' => 'Pembe',
         ],
     ],
+    'settings' => [
+        'per_page' => 'Sayfa başına ürün',
+        'per_page_hint' => 'Bu sitede bir katalog bölümünün sayfasında kaç ürün gösterileceği. Boş: temanın varsayılanı.',
+    ],
 ];

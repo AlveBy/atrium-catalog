@@ -62,7 +62,8 @@
                 }
             },
             "migrations": "database/migrations",
-            "demo": "Atrium\\Catalog\\Database\\CatalogDemoSeeder"
+            "demo": "Atrium\\Catalog\\Database\\CatalogDemoSeeder",
+            "settings": "Atrium\\Catalog\\CatalogSettings"
         },
         "laravel": {
             "providers": [

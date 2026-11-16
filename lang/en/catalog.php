@@ -47,4 +47,8 @@ return [
             'pink' => 'Pink',
         ],
     ],
+    'settings' => [
+        'per_page' => 'Products per page',
+        'per_page_hint' => 'How many products a page of a catalog section shows on this site. Empty: the theme\'s default.',
+    ],
 ];

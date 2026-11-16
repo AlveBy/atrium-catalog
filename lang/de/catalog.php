@@ -44,4 +44,8 @@ return [
             'pink' => 'Rosa',
         ],
     ],
+    'settings' => [
+        'per_page' => 'Produkte pro Seite',
+        'per_page_hint' => 'Wie viele Produkte eine Seite eines Katalogbereichs auf dieser Website zeigt. Leer: die Voreinstellung des Themes.',
+    ],
 ];

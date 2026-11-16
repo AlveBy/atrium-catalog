@@ -44,4 +44,8 @@ return [
             'pink' => 'Rosa',
         ],
     ],
+    'settings' => [
+        'per_page' => 'Produtos por página',
+        'per_page_hint' => 'Quantos produtos uma página de uma seção do catálogo mostra neste site. Vazio: o padrão do tema.',
+    ],
 ];

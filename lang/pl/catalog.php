@@ -44,4 +44,8 @@ return [
             'pink' => 'Różowy',
         ],
     ],
+    'settings' => [
+        'per_page' => 'Produktów na stronę',
+        'per_page_hint' => 'Ile produktów pokazuje strona działu katalogu w tej witrynie. Puste: domyślna wartość motywu.',
+    ],
 ];

@@ -1,0 +1,78 @@
+{
+    "name": "alveby/atrium-catalog",
+    "description": "Product catalog for Atrium: nested sections and products shaped like a 1C-Bitrix iblock",
+    "type": "atrium-module",
+    "license": "MIT",
+    "homepage": "https://github.com/AlveBy/atrium",
+    "support": {
+        "issues": "https://github.com/AlveBy/atrium/issues",
+        "source": "https://github.com/AlveBy/atrium"
+    },
+    "keywords": [
+        "laravel",
+        "admin",
+        "cms",
+        "catalog",
+        "shop",
+        "bitrix"
+    ],
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^13.0",
+        "alveby/atrium": "^0.1"
+    },
+    "require-dev": {
+        "alveby/atrium-brands": "^0.1",
+        "alveby/atrium-news": "^0.1",
+        "alveby/atrium-stores": "^0.1",
+        "alveby/atrium-theme": "^0.1",
+        "orchestra/testbench": "^11.0",
+        "phpunit/phpunit": "^12.5"
+    },
+    "suggest": {
+        "alveby/atrium-brands": "Gives products a brand",
+        "alveby/atrium-stores": "Lists the stores that sell a product"
+    },
+    "autoload": {
+        "psr-4": {
+            "Atrium\\Catalog\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Atrium\\Catalog\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "atrium": {
+            "resources": [
+                "Atrium\\Catalog\\Models\\Product",
+                "Atrium\\Catalog\\Models\\CatalogSection"
+            ],
+            "public_urls": {
+                "Atrium\\Catalog\\Models\\Product": {
+                    "prefix": "catalog",
+                    "tree": "Atrium\\Catalog\\Models\\CatalogSection",
+                    "parent": "section_id"
+                },
+                "Atrium\\Catalog\\Models\\CatalogSection": {
+                    "prefix": "catalog",
+                    "tree": "Atrium\\Catalog\\Models\\CatalogSection",
+                    "parent": "parent_id"
+                }
+            },
+            "migrations": "database/migrations",
+            "demo": "Atrium\\Catalog\\Database\\CatalogDemoSeeder"
+        },
+        "laravel": {
+            "providers": [
+                "Atrium\\Catalog\\CatalogServiceProvider"
+            ]
+        },
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

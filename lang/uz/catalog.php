@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'modules' => [
+        'products' => 'Mahsulotlar',
+        'sections' => 'Katalog boʻlimlari',
+    ],
+    'create' => [
+        'product' => 'Mahsulot qoʻshish',
+    ],
+    'fields' => [
+        'article' => 'Artikul',
+        'price' => 'Narx',
+        'brand' => 'Brend',
+        'stores' => 'Qayerdan sotib olish mumkin',
+        'label' => 'Belgi',
+        'colors' => 'Ranglar',
+        'released_on' => 'Chiqarilgan sana',
+        'in_stock' => 'Mavjud',
+        'features' => 'Xususiyatlar',
+        'related' => 'Bunga mos',
+        'specs' => 'Texnik tavsif',
+        'package' => 'Toʻplam',
+        'photos' => 'Fotosuratlar',
+        'manual' => 'Qoʻllanma',
+    ],
+    'options' => [
+        'label' => [
+            'new' => 'Yangi',
+            'hit' => 'Xit',
+            'sale' => 'Chegirma',
+        ],
+        'colors' => [
+            'black' => 'Qora',
+            'silver' => 'Kumush',
+            'blue' => 'Koʻk',
+            'pink' => 'Pushti',
+        ],
+    ],
+];

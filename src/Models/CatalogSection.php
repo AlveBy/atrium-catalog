@@ -9,9 +9,11 @@ declare(strict_types=1);
 
 namespace Atrium\Catalog\Models;
 
+use Atrium\Admin\Cache\CachesRecords;
 use Atrium\Admin\Columns\BooleanColumn;
 use Atrium\Admin\Columns\TextColumn;
 use Atrium\Admin\Contracts\Administrable;
+use Atrium\Admin\Contracts\Cacheable;
 use Atrium\Admin\Fields\CheckboxField;
 use Atrium\Admin\Fields\ContentField;
 use Atrium\Admin\Fields\ImageField;
@@ -32,9 +34,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property string $code
  */
-class CatalogSection extends Model implements Administrable
+class CatalogSection extends Model implements Administrable, Cacheable
 {
-    use InteractsWithAdmin;
+    use CachesRecords, InteractsWithAdmin;
 
     protected $table = 'catalog_sections';
 

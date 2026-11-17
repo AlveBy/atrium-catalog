@@ -9,10 +9,12 @@ declare(strict_types=1);
 
 namespace Atrium\Catalog\Models;
 
+use Atrium\Admin\Cache\CachesRecords;
 use Atrium\Admin\Columns\BooleanColumn;
 use Atrium\Admin\Columns\ImageColumn;
 use Atrium\Admin\Columns\TextColumn;
 use Atrium\Admin\Contracts\Administrable;
+use Atrium\Admin\Contracts\Cacheable;
 use Atrium\Admin\Fields\BelongsToField;
 use Atrium\Admin\Fields\BelongsToManyField;
 use Atrium\Admin\Fields\CheckboxField;
@@ -59,9 +61,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string $name
  * @property string|null $code
  */
-class Product extends Model implements Administrable
+class Product extends Model implements Administrable, Cacheable
 {
-    use HasAdminFiles, HasAdminSeo, HasAdminSlug, HasAdminTabs, HasSoftRelations, InteractsWithAdmin;
+    use CachesRecords, HasAdminFiles, HasAdminSeo, HasAdminSlug, HasAdminTabs, HasSoftRelations, InteractsWithAdmin;
 
     protected $table = 'catalog_products';
 

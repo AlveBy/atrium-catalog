@@ -125,6 +125,7 @@ final class ModelsTest extends TestCase
             'one' => [1, true],
             'the most' => [100, true],
             'zero' => [0, false],
+            'a fraction' => [1.5, false],
             'one too many' => [101, false],
             'negative' => [-5, false],
             'not a number' => ['many', false],

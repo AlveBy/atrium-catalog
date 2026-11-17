@@ -26,7 +26,7 @@ final class CatalogSettings extends ModuleSettings
             NumberField::make('per_page')
                 ->label(__('atrium-catalog::catalog.settings.per_page'))
                 ->hint(__('atrium-catalog::catalog.settings.per_page_hint'))
-                ->rules(['nullable', 'integer', 'min:1', 'max:100']),
+                ->rules(['integer', 'min:1', 'max:100']),
         ];
     }
 }

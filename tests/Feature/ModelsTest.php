@@ -37,6 +37,33 @@ final class ModelsTest extends TestCase
         $this->assertNull(Product::query()->create(['name' => 'Loose'])->section);
     }
 
+    public function test_the_relations_and_the_form_tabs_are_public_api(): void
+    {
+        // Model::__call hides a protected relation, so visibility is read as declared.
+        foreach ([[CatalogSection::class, 'parent'], [Product::class, 'section'], [Product::class, 'getAdminTabs']] as [$class, $method]) {
+            $this->assertTrue((new \ReflectionMethod($class, $method))->isPublic(), "{$class}::{$method}");
+        }
+    }
+
+    public function test_the_label_and_colour_choices_of_a_product(): void
+    {
+        $fields = $this->byName(Product::getAdministrationFields());
+        $values = fn (string $name): array => array_column($fields[$name]->toArray()['options'], 'value');
+
+        $this->assertSame(['new', 'hit', 'sale'], $values('label'));
+        $this->assertSame(['black', 'silver', 'blue', 'pink'], $values('colors'));
+        $this->assertSame('New', $fields['label']->toArray()['options'][0]['label']);
+        $this->assertSame('Black', $fields['colors']->toArray()['options'][0]['label']);
+    }
+
+    public function test_a_product_takes_ten_features_and_no_more(): void
+    {
+        $features = $this->byName(Product::getAdministrationFields())['features'];
+
+        $this->assertSame(10, $features->toArray()['maxItems']);
+        $this->assertContains('max:10', $features->getValidationRules());
+    }
+
     public function test_the_active_flag_of_a_section_is_read_back_as_a_boolean(): void
     {
         $section = CatalogSection::query()->create(['name' => 'Phones', 'code' => 'phones', 'active' => 1]);

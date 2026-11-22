@@ -98,7 +98,7 @@ final class ImportCommand extends Command
             ...$read,
             ...$settings,
             'status' => CatalogImport::NEW,
-            'original_name' => mb_substr(basename((string) parse_url($location, PHP_URL_PATH)), 0, 255),
+            'original_name' => mb_substr(rawurldecode(basename((string) strtok($location, '?#'))), 0, 255),
             'file' => $file,
         ]);
 
@@ -108,7 +108,6 @@ final class ImportCommand extends Command
             // Each step saves its place; the next one goes on from there.
         }
 
-        $import->refresh();
         $import->deleteFile();
 
         return $this->report($import);

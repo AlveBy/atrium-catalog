@@ -57,6 +57,7 @@ final class ImportCommandTest extends TestCase
 
         $import = CatalogImport::query()->sole();
         $this->assertSame([CatalogImport::DONE, 'price.csv', null], [$import->status, $import->original_name, $import->admin_user_id]);
+        $this->assertMatchesRegularExpression('/^[0-9a-f-]{36}\.csv$/', $import->file);
         $this->assertSame(['article', 'name', 'price'], $import->mapping);
         $this->assertSame(['key' => 'article', 'mode' => 'both', 'create_sections' => false, 'separator' => '/'], $import->options);
         $this->assertSame(['A-1', 'A-2'], Product::query()->orderBy('id')->pluck('article')->all());
@@ -221,6 +222,30 @@ final class ImportCommandTest extends TestCase
         $this->assertSame('price.csv', CatalogImport::query()->sole()->original_name);
         $this->assertSame(1, Product::query()->count());
         $this->assertSame($before, glob(sys_get_temp_dir().'/atrium-import*') ?: []);
+    }
+
+    public function test_a_download_has_two_minutes_and_the_name_of_the_file_keeps_255_letters(): void
+    {
+        $timeout = null;
+        Http::fake(static function ($request, array $options) use (&$timeout) {
+            $timeout = $options['timeout'];
+
+            return Http::response("Артикул;Наименование\nA-1;Parka\n");
+        });
+        $name = 'П'.str_repeat('я', 300).'.csv';
+
+        $this->artisan('atrium:catalog:import', ['source' => 'HTTPS://example.com/'.rawurlencode($name).'#top'])->assertExitCode(0);
+        $this->artisan('atrium:catalog:import', ['source' => 'https://example.com/feeds/'.$name.'?token=1'])->assertExitCode(0);
+
+        $this->assertSame(120, $timeout);
+        $this->assertSame(['П'.str_repeat('я', 254), 'П'.str_repeat('я', 254)], CatalogImport::query()->orderBy('id')->pluck('original_name')->all());
+    }
+
+    public function test_a_path_with_an_address_inside_is_a_path(): void
+    {
+        $this->artisan('atrium:catalog:import', ['source' => $this->files.'/https://example.com/price.csv'])
+            ->expectsOutput('There is no file '.$this->files.'/https://example.com/price.csv.')
+            ->assertExitCode(1);
     }
 
     public function test_a_url_that_does_not_give_the_file(): void

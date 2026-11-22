@@ -16,10 +16,14 @@ use Atrium\Catalog\Import\ProcessImport;
 use Atrium\Catalog\Models\CatalogImport;
 use Atrium\Catalog\Models\Product;
 use Atrium\Catalog\Tests\TestCase;
+use Closure;
+use Illuminate\Contracts\Cache\Lock;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Queue;
 use Inertia\Testing\AssertableInertia;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -115,6 +119,7 @@ final class ImportControllerTest extends TestCase
         $this->freezeTime();
         $console = $this->import(['original_name' => 'cron.csv']);
         $mine = $this->import(['admin_user_id' => $this->admin->id, 'original_name' => 'mine.csv']);
+        $mine->forceFill(['started_at' => now()->subMinute(), 'finished_at' => now()])->save();
 
         foreach (range(1, 19) as $number) {
             $this->import(['original_name' => "more-{$number}.csv"]);
@@ -131,6 +136,10 @@ final class ImportControllerTest extends TestCase
                 ->where('imports.19.user', 'Admin')
                 ->where('imports.18.user', null)
                 ->where('imports.19.created_at', now()->toIso8601String())
+                ->where('imports.19.started_at', now()->subMinute()->toIso8601String())
+                ->where('imports.19.finished_at', now()->toIso8601String())
+                ->where('imports.18.started_at', null)
+                ->where('imports.18.finished_at', null)
                 ->where('maxSize', 51200)
                 ->where('strings.title', 'Import products'));
 
@@ -139,14 +148,14 @@ final class ImportControllerTest extends TestCase
 
     public function test_an_upload_is_read_and_its_columns_guessed(): void
     {
-        $name = str_repeat('a', 300).'.csv';
+        $name = 'П'.str_repeat('я', 300).'.csv';
         $response = $this->post('/admin/catalog-import', ['file' => UploadedFile::fake()->createWithContent($name, "Наименование;Артикул;Что-то\nParka;A-1;x\n")]);
 
         $import = CatalogImport::query()->sole();
         $response->assertRedirect(route('admin.catalog-import.show', $import));
         $this->assertSame(CatalogImport::NEW, $import->status);
         $this->assertSame($this->admin->id, $import->admin_user_id);
-        $this->assertSame(mb_substr($name, 0, 255), $import->original_name);
+        $this->assertSame('П'.str_repeat('я', 254), $import->original_name);
         $this->assertSame(['Наименование', 'Артикул', 'Что-то'], $import->headers);
         $this->assertSame(['name', 'article', null], $import->mapping);
         $this->assertNull($import->options);
@@ -167,6 +176,35 @@ final class ImportControllerTest extends TestCase
         $import = CatalogImport::query()->latest('id')->first();
         $this->assertSame([null, 'article'], $import?->mapping);
         $this->assertSame(['key' => 'external_id'], $import?->options);
+    }
+
+    public function test_the_twentieth_import_back_is_still_looked_at(): void
+    {
+        $this->import(['headers' => ['Name', 'SKU'], 'mapping' => [null, 'article'], 'options' => ['key' => 'code']]);
+
+        foreach (range(1, 19) as $number) {
+            $this->import(['headers' => ["Column {$number}"], 'mapping' => [null]]);
+        }
+
+        $this->post('/admin/catalog-import', ['file' => UploadedFile::fake()->createWithContent('a.csv', "Name;SKU\nParka;A-1\n")]);
+
+        $this->assertSame([null, 'article'], CatalogImport::query()->latest('id')->first()?->mapping);
+    }
+
+    public function test_the_directory_is_made_when_it_is_not_there(): void
+    {
+        File::deleteDirectory($this->directory);
+
+        $this->post('/admin/catalog-import', ['file' => UploadedFile::fake()->createWithContent('a.csv', "Name\nParka\n")])->assertSessionHasNoErrors();
+
+        $this->assertFileExists(CatalogImport::query()->sole()->path());
+    }
+
+    public function test_the_error_names_the_file_in_the_language_of_the_admin(): void
+    {
+        $this->admin->update(['locale' => 'ru']);
+
+        $this->post('/admin/catalog-import', [])->assertSessionHasErrors(['file' => 'Заполните поле «файл».']);
     }
 
     public function test_an_import_older_than_the_last_twenty_is_not_looked_at(): void
@@ -197,6 +235,15 @@ final class ImportControllerTest extends TestCase
     {
         $this->post('/admin/catalog-import', ['file' => UploadedFile::fake()->createWithContent('a.xls', "\xD0\xCF\x11\xE0\x00\x01\x02\x03\x00")])
             ->assertSessionHasErrors(['file' => 'This is not a CSV or Excel (xlsx) file. An old .xls file can be saved as .xlsx or CSV in Excel.']);
+
+        $this->assertSame(0, CatalogImport::query()->count());
+        $this->assertSame([], File::files($this->directory));
+    }
+
+    public function test_a_file_with_nothing_under_the_header_is_refused_and_not_kept(): void
+    {
+        $this->post('/admin/catalog-import', ['file' => UploadedFile::fake()->createWithContent('a.csv', "Name;SKU\n")])
+            ->assertSessionHasErrors('file');
 
         $this->assertSame(0, CatalogImport::query()->count());
         $this->assertSame([], File::files($this->directory));
@@ -365,6 +412,25 @@ final class ImportControllerTest extends TestCase
         $this->assertNotNull($import->finished_at);
         $this->assertFileDoesNotExist($import->path());
         $this->assertSame(0, Product::query()->count());
+    }
+
+    public function test_stopping_waits_for_the_step_under_way_and_reads_the_import_after_it(): void
+    {
+        config(['atrium-catalog.import.seconds' => 20]);
+        $import = $this->running();
+        $lock = Mockery::mock(Lock::class);
+        $lock->shouldReceive('block')->once()->with(25, Mockery::type(Closure::class))->andReturnUsing(static function (int $seconds, Closure $then) use ($import): mixed {
+            // The step under way finished the import while this waited.
+            CatalogImport::query()->whereKey($import->id)->update(['status' => CatalogImport::DONE]);
+
+            return $then();
+        });
+        Cache::partialMock()->shouldReceive('lock')->once()->with('atrium-catalog-import:'.$import->id, 10)->andReturn($lock);
+
+        $this->post('/admin/catalog-import/'.$import->id.'/cancel')->assertRedirect();
+
+        $this->assertSame(CatalogImport::DONE, $import->refresh()->status);
+        $this->assertFileExists($import->path());
     }
 
     public function test_a_finished_import_stays_finished(): void

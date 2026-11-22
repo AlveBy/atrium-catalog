@@ -49,13 +49,13 @@ final class Targets
         'sort' => ['order', 'position', 'сортировка'],
     ];
 
-    /** @var array<string,array{label:string,base:string,field:Field|null,locale:string|null}>|null */
+    /** @var array<string,array{label:string,field:Field|null,locale:string|null,base?:string}>|null */
     private ?array $all = null;
 
     public function __construct(private readonly ContentLanguages $languages) {}
 
     /**
-     * @return array<string,array{label:string,base:string,field:Field|null,locale:string|null}>
+     * @return array<string,array{label:string,field:Field|null,locale:string|null,base?:string}>
      */
     public function all(): array
     {
@@ -63,7 +63,7 @@ final class Targets
     }
 
     /**
-     * @return array{label:string,base:string,field:Field|null,locale:string|null}|null
+     * @return array{label:string,field:Field|null,locale:string|null,base?:string}|null
      */
     public function get(string $key): ?array
     {
@@ -105,7 +105,7 @@ final class Targets
 
             if ($key !== null && ! isset($used[$key])) {
                 $mapping[$index] = $key;
-                $used[$key] = true;
+                $used[$key] = $index;
             }
         }
 
@@ -113,7 +113,7 @@ final class Targets
     }
 
     /**
-     * @return array<string,array{label:string,base:string,field:Field|null,locale:string|null}>
+     * @return array<string,array{label:string,field:Field|null,locale:string|null,base?:string}>
      */
     private function build(): array
     {
@@ -127,7 +127,7 @@ final class Targets
 
             if ($name === 'section_id') {
                 $label = $field->getLabel();
-                $targets[self::SECTION] = ['label' => $label, 'base' => $label, 'field' => null, 'locale' => null];
+                $targets[self::SECTION] = ['label' => $label, 'field' => null, 'locale' => null];
             }
 
             if (self::skipped($field)) {
@@ -147,7 +147,7 @@ final class Targets
                 continue;
             }
 
-            $targets[$name] = ['label' => $field->getLabel(), 'base' => $field->getLabel(), 'field' => $field, 'locale' => null];
+            $targets[$name] = ['label' => $field->getLabel(), 'field' => $field, 'locale' => null];
         }
 
         return $targets;
@@ -180,22 +180,20 @@ final class Targets
         $default = $this->languages->default();
         $current = app()->getLocale();
 
-        try {
-            foreach (array_keys(config('atrium.locales')) as $locale) {
-                app()->setLocale($locale);
+        foreach (array_keys(config('atrium.locales')) as $locale) {
+            app()->setLocale($locale);
 
-                foreach ($this->build() as $key => $target) {
-                    $aliases[Cells::normalize($target['label'])] ??= $key;
+            foreach ($this->build() as $key => $target) {
+                $aliases[Cells::normalize($target['label'])] ??= $key;
 
-                    // "Name" alone is the default language's name.
-                    if ($target['locale'] === $default) {
-                        $aliases[Cells::normalize($target['base'])] ??= $key;
-                    }
+                // "Name" alone is the default language's name.
+                if ($target['locale'] === $default) {
+                    $aliases[Cells::normalize($target['base'] ?? '')] ??= $key;
                 }
             }
-        } finally {
-            app()->setLocale($current);
         }
+
+        app()->setLocale($current);
 
         foreach (array_keys($this->all()) as $key) {
             $aliases[Cells::normalize($key)] ??= $key;

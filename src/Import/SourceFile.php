@@ -86,7 +86,7 @@ final class SourceFile
 
     private function format(string $path): string
     {
-        $head = file_get_contents($path, false, null, 0, 4096);
+        $head = file_get_contents($path, length: 4096);
 
         if (str_starts_with($head, "PK\x03\x04")) {
             return self::XLSX;
@@ -107,7 +107,6 @@ final class SourceFile
         $handle = fopen($path, 'rb');
         $sample = fread($handle, self::SAMPLE);
         $bom = str_starts_with($sample, self::BOM);
-        $sample = $bom ? substr($sample, strlen(self::BOM)) : $sample;
 
         // The sample may end in the middle of a letter: check whole lines.
         $cut = strrpos($sample, "\n");
@@ -172,8 +171,6 @@ final class SourceFile
             }
         } catch (OpenSpoutException) {
             throw ImportFailed::because('unreadable');
-        } finally {
-            $reader->close();
         }
     }
 

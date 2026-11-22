@@ -163,7 +163,7 @@ final class ImportController
             ]),
             'options' => [...CatalogImport::DEFAULTS, ...($import->options ?? [])],
             'user' => $import->user?->name,
-            'created_at' => $import->created_at?->toIso8601String(),
+            'created_at' => $import->created_at->toIso8601String(),
             'started_at' => $import->started_at?->toIso8601String(),
             'finished_at' => $import->finished_at?->toIso8601String(),
         ];

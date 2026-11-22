@@ -45,8 +45,8 @@ final class Cells
      */
     public static function number(string $value): string
     {
-        $number = (string) preg_replace('/[\s\x{00A0}\x{202F}\']+/u', '', $value);
-        $marks = (string) preg_replace('/[^.,]/', '', $number);
+        $number = preg_replace('/[\s\x{00A0}\x{202F}\']+/u', '', $value) ?? '';
+        $marks = preg_replace('/[^.,]/', '', $number) ?? '';
 
         if ($marks === '') {
             return $number;

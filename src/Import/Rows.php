@@ -24,6 +24,16 @@ final class Rows
     {
         $handle = fopen($file, 'rb');
         fseek($handle, $position);
+
+        return self::rows($handle, $limit);
+    }
+
+    /**
+     * @param  resource  $handle
+     * @return array<int,array{number:int,cells:array<int,string>,end:int}>
+     */
+    private static function rows($handle, int $limit): array
+    {
         $rows = [];
 
         while (count($rows) < $limit && ($cells = fgetcsv($handle, null, ',', '"', '')) !== false) {
@@ -51,6 +61,6 @@ final class Rows
      */
     public static function preview(string $file, int $limit): array
     {
-        return array_column(self::read($file, 0, $limit), 'cells');
+        return array_column(self::rows(fopen($file, 'rb'), $limit), 'cells');
     }
 }

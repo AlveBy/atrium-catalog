@@ -296,7 +296,7 @@ final class ImportControllerTest extends TestCase
         $import->refresh();
         $this->assertSame(CatalogImport::CHECKING, $import->status);
         $this->assertSame(['article', 'name'], $import->mapping);
-        $this->assertSame(['key' => 'article', 'mode' => 'create', 'create_sections' => true, 'separator' => '>'], $import->options);
+        $this->assertSameOptions(['key' => 'article', 'mode' => 'create', 'create_sections' => true, 'separator' => '>'], $import->options);
         $this->assertNotNull($import->started_at);
     }
 
@@ -474,5 +474,20 @@ final class ImportControllerTest extends TestCase
         ]);
 
         return $import->refresh();
+    }
+
+    /**
+     * MySQL keeps the keys of a JSON column in an order of its own.
+     *
+     * @param  array<string,mixed>  $expected
+     * @param  array<string,mixed>|null  $actual
+     */
+    private function assertSameOptions(array $expected, ?array $actual): void
+    {
+        $this->assertNotNull($actual);
+        ksort($expected);
+        ksort($actual);
+
+        $this->assertSame($expected, $actual);
     }
 }

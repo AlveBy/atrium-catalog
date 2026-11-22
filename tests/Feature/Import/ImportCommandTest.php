@@ -59,7 +59,7 @@ final class ImportCommandTest extends TestCase
         $this->assertSame([CatalogImport::DONE, 'price.csv', null], [$import->status, $import->original_name, $import->admin_user_id]);
         $this->assertMatchesRegularExpression('/^[0-9a-f-]{36}\.csv$/', $import->file);
         $this->assertSame(['article', 'name', 'price'], $import->mapping);
-        $this->assertSame(['key' => 'article', 'mode' => 'both', 'create_sections' => false, 'separator' => '/'], $import->options);
+        $this->assertSameOptions(['key' => 'article', 'mode' => 'both', 'create_sections' => false, 'separator' => '/'], $import->options);
         $this->assertSame(['A-1', 'A-2'], Product::query()->orderBy('id')->pluck('article')->all());
         $this->assertSame([], File::files($this->directory));
     }
@@ -106,7 +106,7 @@ final class ImportCommandTest extends TestCase
             ->expectsOutput('Rows: 2. Created: 0, updated: 1, skipped: 1, errors: 0, sections created: 2.')
             ->assertExitCode(0);
 
-        $this->assertSame(['key' => 'code', 'mode' => 'update', 'create_sections' => true, 'separator' => '>'], CatalogImport::query()->sole()->options);
+        $this->assertSameOptions(['key' => 'code', 'mode' => 'update', 'create_sections' => true, 'separator' => '>'], CatalogImport::query()->sole()->options);
         $this->assertSame('5.00', Product::query()->sole()->price);
         $this->assertSame('Куртки', CatalogSection::query()->find(Product::query()->sole()->section_id)?->name);
     }
@@ -140,7 +140,7 @@ final class ImportCommandTest extends TestCase
 
         $this->artisan('atrium:catalog:import', ['source' => $file, '--like' => $earlier->id, '--key' => 'article', '--mode' => 'both'])->assertExitCode(0);
 
-        $this->assertSame(['key' => 'article', 'mode' => 'both', 'create_sections' => false, 'separator' => '/'], CatalogImport::query()->latest('id')->first()?->options);
+        $this->assertSameOptions(['key' => 'article', 'mode' => 'both', 'create_sections' => false, 'separator' => '/'], CatalogImport::query()->latest('id')->first()?->options);
     }
 
     public function test_map_names_a_column_with_an_equals_sign_and_leaves_one_out(): void
@@ -317,5 +317,20 @@ final class ImportCommandTest extends TestCase
         File::put($this->files.'/'.$name, $content);
 
         return $this->files.'/'.$name;
+    }
+
+    /**
+     * MySQL keeps the keys of a JSON column in an order of its own.
+     *
+     * @param  array<string,mixed>  $expected
+     * @param  array<string,mixed>|null  $actual
+     */
+    private function assertSameOptions(array $expected, ?array $actual): void
+    {
+        $this->assertNotNull($actual);
+        ksort($expected);
+        ksort($actual);
+
+        $this->assertSame($expected, $actual);
     }
 }

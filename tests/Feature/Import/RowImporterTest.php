@@ -289,7 +289,7 @@ final class RowImporterTest extends TestCase
             DB::enableQueryLog();
             $import();
 
-            return count(array_filter(DB::getQueryLog(), static fn (array $query): bool => $query['query'] === 'select * from "brands"'));
+            return count(array_filter(DB::getQueryLog(), static fn (array $query): bool => preg_match('/^select \* from ["`]brands["`]$/', $query['query']) === 1));
         };
 
         $first = $lists(static fn () => $importer->import(2, ['A-1', 'Parka', 'Acme']));
@@ -305,10 +305,9 @@ final class RowImporterTest extends TestCase
         $this->importer($import)->import(2, ['A-1', 'Parka', '05/03/2026 10:30', '05/03/2026 10:30']);
 
         $this->assertSame([], $import->errors);
-        $this->assertSame(
-            ['active_from' => '2026-03-05 10:30:00', 'released_on' => '2026-03-05 00:00:00'],
-            (array) DB::table('catalog_products')->select('active_from', 'released_on')->first(),
-        );
+        $this->assertSame('2026-03-05 10:30:00', Product::query()->sole()->active_from?->format('Y-m-d H:i:s'));
+        // SQLite keeps what it is given; MySQL and PostgreSQL keep the date alone.
+        $this->assertContains(DB::table('catalog_products')->value('released_on'), ['2026-03-05 00:00:00', '2026-03-05']);
     }
 
     public function test_a_section_that_is_not_there_fails_unless_it_is_created(): void

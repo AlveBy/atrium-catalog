@@ -17,6 +17,7 @@ return [
     ],
     'fields' => [
         'article' => 'Référence',
+        'external_id' => 'ID externe',
         'price' => 'Prix',
         'brand' => 'Marque',
         'stores' => 'Où acheter',

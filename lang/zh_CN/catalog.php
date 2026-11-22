@@ -17,6 +17,7 @@ return [
     ],
     'fields' => [
         'article' => '货号',
+        'external_id' => '外部编码',
         'price' => '价格',
         'brand' => '品牌',
         'stores' => '购买门店',

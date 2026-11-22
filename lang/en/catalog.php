@@ -20,6 +20,7 @@ return [
     ],
     'fields' => [
         'article' => 'Article number',
+        'external_id' => 'External ID',
         'price' => 'Price',
         'brand' => 'Brand',
         'stores' => 'Where to buy',

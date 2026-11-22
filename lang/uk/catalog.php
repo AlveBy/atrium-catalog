@@ -17,6 +17,7 @@ return [
     ],
     'fields' => [
         'article' => 'Артикул',
+        'external_id' => 'Зовнішній код',
         'price' => 'Ціна',
         'brand' => 'Бренд',
         'stores' => 'Де купити',

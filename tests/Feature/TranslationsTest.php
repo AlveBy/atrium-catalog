@@ -31,6 +31,7 @@ final class TranslationsTest extends TestCase
     {
         return [
             'catalog' => [CatalogServiceProvider::class, 'catalog'],
+            'import' => [CatalogServiceProvider::class, 'import'],
             'brands' => [BrandsServiceProvider::class, 'brands'],
             'stores' => [StoresServiceProvider::class, 'stores'],
             'news' => [NewsServiceProvider::class, 'news'],

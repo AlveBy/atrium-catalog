@@ -17,6 +17,7 @@ return [
     ],
     'fields' => [
         'article' => 'Numer katalogowy',
+        'external_id' => 'Zewnętrzny ID',
         'price' => 'Cena',
         'brand' => 'Marka',
         'stores' => 'Gdzie kupić',

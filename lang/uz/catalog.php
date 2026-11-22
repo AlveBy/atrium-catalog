@@ -17,6 +17,7 @@ return [
     ],
     'fields' => [
         'article' => 'Artikul',
+        'external_id' => 'Tashqi kod',
         'price' => 'Narx',
         'brand' => 'Brend',
         'stores' => 'Qayerdan sotib olish mumkin',

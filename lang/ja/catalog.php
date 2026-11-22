@@ -17,6 +17,7 @@ return [
     ],
     'fields' => [
         'article' => '品番',
+        'external_id' => '外部ID',
         'price' => '価格',
         'brand' => 'ブランド',
         'stores' => '取扱店舗',

@@ -17,6 +17,7 @@ return [
     ],
     'fields' => [
         'article' => 'Ürün kodu',
+        'external_id' => 'Harici kimlik',
         'price' => 'Fiyat',
         'brand' => 'Marka',
         'stores' => 'Nereden alınır',

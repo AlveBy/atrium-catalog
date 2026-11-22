@@ -17,6 +17,7 @@ return [
     ],
     'fields' => [
         'article' => 'Codice articolo',
+        'external_id' => 'ID esterno',
         'price' => 'Prezzo',
         'brand' => 'Marchio',
         'stores' => 'Dove acquistare',

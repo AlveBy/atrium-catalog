@@ -21,6 +21,16 @@ Add `--demo` to the second command to fill the catalog with a small electronics 
 
 Both links are soft. Without those modules the fields are not in the form, `$product->brand` is null and `$product->stores` is empty. No query touches their tables. `brand_id` and the `catalog_product_store` pivot table belong to the catalog, so a module installed later finds the links where they were left.
 
+## Import
+
+**Products → Import** loads products from CSV and Excel (xlsx): upload a file, check which field each column fills (guessed from the column names), press **Check** to see what will be created and updated and which rows have errors, then **Import**. Products are found again by article number, code or external ID; sections by name or path, created when asked; pictures by URL (downloaded into the media library) or by a path on the site. Large files run in steps through the queue, the scheduler or the progress page. The same from the console:
+
+```bash
+php artisan atrium:catalog:import https://supplier.example/price.csv --key=external_id --mode=update
+```
+
+Importing is a permission of its own, `catalog_products.import`. The guide is [docs/catalog-import.md](https://github.com/AlveBy/atrium/blob/main/docs/catalog-import.md).
+
 ## On the site
 
 With the public theme (`alveby/atrium-theme`), sections and products have their own pages under `/catalog`: `/catalog/computers/laptops/aero-14`. To move them, list the models in `config/atrium.php` under `public_urls`.

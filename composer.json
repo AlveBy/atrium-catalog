@@ -19,7 +19,8 @@
     "require": {
         "php": "^8.3",
         "illuminate/support": "^13.0",
-        "alveby/atrium": "^0.1"
+        "alveby/atrium": "^0.1",
+        "openspout/openspout": "^4.33"
     },
     "require-dev": {
         "alveby/atrium-brands": "^0.1",
@@ -63,7 +64,12 @@
             },
             "migrations": "database/migrations",
             "demo": "Atrium\\Catalog\\Database\\CatalogDemoSeeder",
-            "settings": "Atrium\\Catalog\\CatalogSettings"
+            "settings": "Atrium\\Catalog\\CatalogSettings",
+            "permissions": {
+                "catalog_products.import": {
+                    "label": "atrium-catalog::import.permission"
+                }
+            }
         },
         "laravel": {
             "providers": [

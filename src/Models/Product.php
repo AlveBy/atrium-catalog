@@ -71,7 +71,7 @@ class Product extends Model implements Administrable, Cacheable
         'section_id', 'name', 'code', 'active', 'active_from', 'active_to', 'sort',
         'preview_picture', 'preview_text', 'preview_text_type', 'detail_picture', 'detail_text', 'detail_text_type',
         'article', 'price', 'brand_id', 'label', 'colors', 'released_on', 'in_stock', 'features', 'package',
-        'specs', 'photos', 'manual', 'related',
+        'specs', 'photos', 'manual', 'related', 'external_id',
     ];
 
     protected function casts(): array
@@ -169,6 +169,7 @@ class Product extends Model implements Administrable, Cacheable
             SlugField::make('code')->label(__('atrium::fields.standard.code'))->from('name')->tab('params'),
             NumberField::make('sort')->label(__('atrium::fields.standard.sort'))->default(500)->tab('params'),
             TextField::make('article')->label(__('atrium-catalog::catalog.fields.article'))->tab('params'),
+            TextField::make('external_id')->label(__('atrium-catalog::catalog.fields.external_id'))->maxLength(255)->tab('params'),
             NumberField::make('price')->label(__('atrium-catalog::catalog.fields.price'))->tab('params'),
             ...Soft::when(Brand::class, fn (): array => [
                 BelongsToField::make('brand_id')->label(__('atrium-catalog::catalog.fields.brand'))->model(Brand::class)->tab('params'),

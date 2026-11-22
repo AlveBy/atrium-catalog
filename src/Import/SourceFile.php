@@ -105,7 +105,7 @@ final class SourceFile
     private function csv(string $path): array
     {
         $handle = fopen($path, 'rb');
-        $sample = fread($handle, self::SAMPLE);
+        $sample = stream_get_contents($handle, self::SAMPLE);
         $bom = str_starts_with($sample, self::BOM);
 
         // The sample may end in the middle of a letter: check whole lines.

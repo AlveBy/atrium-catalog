@@ -78,7 +78,7 @@ final class ProductImportScreensTest extends ProductTransferTestCase
                     ['key' => 'id', 'label' => 'ID'],
                 ])
                 ->where('import.mapping', ['article', 'name', 'price', 'external_id', 'section_id', 'photos'])
-                ->where('import.options', ['mode' => 'both', 'separator' => '/', 'create_sections' => false])
+                ->where('import.options', ['mode' => 'both', 'separator' => '/', 'create_sections' => false, 'key' => 'article'])
                 ->where('targets', static fn ($targets): bool => in_array(['key' => 'section_id', 'label' => 'Section'], collect($targets)->all(), true)
                     && in_array(['key' => 'external_id', 'label' => 'External ID'], collect($targets)->all(), true)));
     }
@@ -93,7 +93,7 @@ final class ProductImportScreensTest extends ProductTransferTestCase
             ->assertOk()
             ->assertInertia(static fn (AssertableInertia $page) => $page
                 ->where('moduleOptions', [])
-                ->where('import.options', ['mode' => 'both']));
+                ->where('import.options', ['mode' => 'both', 'key' => 'id']));
     }
 
     public function test_the_hook_adds_the_option_for_the_products_only(): void

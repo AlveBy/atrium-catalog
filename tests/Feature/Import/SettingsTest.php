@@ -59,6 +59,8 @@ final class SettingsTest extends TestCase
             'not a list' => [['mapping' => [1 => 'name', 2 => 'article']] + $valid, 'mapping', 'The Columns field must be a list.'],
             'an unknown field' => [['mapping' => ['name', 'nonsense']] + $valid, 'mapping.1', 'The selected Columns is invalid.'],
             'a field twice' => [['mapping' => ['article', 'article']] + $valid, 'mapping', 'A field takes one column only; chosen more than once: Article number.'],
+            'no key' => [['key' => null] + $valid, 'key', 'The Find products by field is required.'],
+            'no mode' => [['mode' => null] + $valid, 'mode', 'The What to do field is required.'],
             'an unknown key' => [['key' => 'name'] + $valid, 'key', 'The selected Find products by is invalid.'],
             'the key not mapped' => [['key' => 'code'] + $valid, 'key', 'Products are found by "Code", but no column fills it.'],
             'an unknown mode' => [['mode' => 'replace'] + $valid, 'mode', 'The selected What to do is invalid.'],

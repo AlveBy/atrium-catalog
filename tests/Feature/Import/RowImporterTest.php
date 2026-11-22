@@ -22,8 +22,10 @@ use Atrium\Catalog\Models\CatalogImport;
 use Atrium\Catalog\Models\CatalogSection;
 use Atrium\Catalog\Models\Product;
 use Atrium\Catalog\Tests\TestCase;
+use Closure;
 use Exception;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -275,6 +277,38 @@ final class RowImporterTest extends TestCase
 
         $this->assertSame($brand->id, (int) Product::query()->where('article', 'A-1')->value('brand_id'));
         $this->assertSame(['"Brand": there is no option "Nobody".'], $import->errors[0]['messages']);
+    }
+
+    public function test_the_options_of_a_field_are_read_once_per_import(): void
+    {
+        Brand::query()->create(['name' => 'Acme', 'code' => 'acme', 'active' => true]);
+        $import = $this->import(['article', 'name', 'brand_id']);
+        $importer = $this->importer($import);
+        $lists = static function (Closure $import): int {
+            DB::flushQueryLog();
+            DB::enableQueryLog();
+            $import();
+
+            return count(array_filter(DB::getQueryLog(), static fn (array $query): bool => $query['query'] === 'select * from "brands"'));
+        };
+
+        $first = $lists(static fn () => $importer->import(2, ['A-1', 'Parka', 'Acme']));
+        $second = $lists(static fn () => $importer->import(3, ['A-2', 'Boots', 'acme']));
+
+        $this->assertSame($first - 1, $second);
+        $this->assertSame(2, Product::query()->whereNotNull('brand_id')->count());
+    }
+
+    public function test_dates_are_read_day_first_and_a_date_drops_the_time(): void
+    {
+        $import = $this->import(['article', 'name', 'active_from', 'released_on']);
+        $this->importer($import)->import(2, ['A-1', 'Parka', '05/03/2026 10:30', '05/03/2026 10:30']);
+
+        $this->assertSame([], $import->errors);
+        $this->assertSame(
+            ['active_from' => '2026-03-05 10:30:00', 'released_on' => '2026-03-05 00:00:00'],
+            (array) DB::table('catalog_products')->select('active_from', 'released_on')->first(),
+        );
     }
 
     public function test_a_section_that_is_not_there_fails_unless_it_is_created(): void

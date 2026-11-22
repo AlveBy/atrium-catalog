@@ -64,14 +64,15 @@ final class Cells
     }
 
     /**
-     * A date as the database keeps it, with the time when $withTime.
+     * A date as the database keeps it, with the time when $withTime;
+     * without, a time in the cell is dropped.
      */
     public static function date(string $value, bool $withTime): string
     {
         $value = trim($value);
 
         foreach (self::DATES as $format) {
-            foreach ($withTime ? [$format.' H:i:s', $format.' H:i', $format] : [$format] as $pattern) {
+            foreach ([$format.' H:i:s', $format.' H:i', $format] as $pattern) {
                 $date = DateTimeImmutable::createFromFormat('!'.$pattern, $value);
 
                 if ($date !== false && $date->format($pattern) === $value) {

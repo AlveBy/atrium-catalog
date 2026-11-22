@@ -76,6 +76,9 @@ final class CatalogImportTest extends TestCase
         $this->assertFalse($import->seen('section', 'A-1'));
         $this->assertFalse($other->seen('product', 'A-1'));
         $this->assertTrue($other->remember('product', 'A-1'));
+        $this->assertTrue($import->remember('brand', 'Ключ'));
+        $this->assertTrue($import->seen('brand', 'КЛЮЧ'));
+        $this->assertFalse($import->remember('brand', 'кЛЮЧ'));
 
         $import->forgetSeen();
 

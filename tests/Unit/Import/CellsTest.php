@@ -88,7 +88,8 @@ final class CellsTest extends TestCase
             'spaces around' => [' 31.12.2026 ', false, '2026-12-31'],
             'impossible day is kept' => ['31.02.2026', false, '31.02.2026'],
             'not a date' => ['soon', false, 'soon'],
-            'a time is not a date' => ['31.12.2026 10:00', false, '31.12.2026 10:00'],
+            'a date drops the time' => ['31.12.2026 10:00', false, '2026-12-31'],
+            'a bad time is kept in a date' => ['31.12.2026 25:00', false, '31.12.2026 25:00'],
             'with seconds' => ['31.12.2026 10:20:30', true, '2026-12-31 10:20:30'],
             'without seconds' => ['31.12.2026 10:20', true, '2026-12-31 10:20:00'],
             'date only, midnight' => ['31.12.2026', true, '2026-12-31 00:00:00'],
@@ -108,6 +109,7 @@ final class CellsTest extends TestCase
         $this->assertSame(['red', 'green', 'light blue', 'black'], Cells::items(" red | green\r\nlight blue\n\n|black| "));
         $this->assertSame(['a, b'], Cells::items('a, b'));
         $this->assertSame([], Cells::items(' | '));
+        $this->assertSame(['a', 'b'], Cells::items('a||b'));
     }
 
     public function test_addresses_also_by_commas_semicolons_and_spaces(): void

@@ -123,6 +123,17 @@ class Product extends Model implements Administrable, Cacheable
             ->orderBy('catalog_product_related.sort');
     }
 
+    /**
+     * A price list knows a product by its article first, then by its code or
+     * the code of the accounting program.
+     *
+     * @return array<int,string>
+     */
+    public static function getImportKeys(): array
+    {
+        return ['article', 'code', 'external_id', 'id'];
+    }
+
     public static function getAdminLabel(): string
     {
         return __('atrium-catalog::catalog.modules.products');

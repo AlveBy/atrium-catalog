@@ -21,15 +21,16 @@ Add `--demo` to the second command to fill the catalog with a small electronics 
 
 Both links are soft. Without those modules the fields are not in the form, `$product->brand` is null and `$product->stores` is empty. No query touches their tables. `brand_id` and the `catalog_product_store` pivot table belong to the catalog, so a module installed later finds the links where they were left.
 
-## Import
+## Import and export
 
-**Products → Import** loads products from CSV and Excel (xlsx): upload a file, check which field each column fills (guessed from the column names), press **Check** to see what will be created and updated and which rows have errors, then **Import**. Products are found again by article number, code or external ID; sections by name or path, created when asked; pictures by URL (downloaded into the media library) or by a path on the site. Large files run in steps through the queue, the scheduler or the progress page. The same from the console:
+**Products → Import** and **Export** work as in every module of the admin ([docs/import-export.md](https://github.com/AlveBy/atrium/blob/main/docs/import-export.md)): upload a CSV or Excel (xlsx) file, check which field each column fills, press **Check** to see what will be created and updated and which rows have errors, then **Import**. What is the catalog's own (`Atrium\Catalog\ProductImport`): products are found again by article number, code or external ID; `SKU`, `Артикул`, `Цена` and the like are recognised; sections by name or path, created when asked; pictures by URL (downloaded into the media library) or by a path on the site. The same from the console:
 
 ```bash
-php artisan atrium:catalog:import https://supplier.example/price.csv --key=external_id --mode=update
+php artisan atrium:import catalog_products https://supplier.example/price.csv --key=external_id --mode=update
+php artisan atrium:export catalog_products products.xlsx
 ```
 
-Importing is a permission of its own, `catalog_products.import`. The guide is [docs/catalog-import.md](https://github.com/AlveBy/atrium/blob/main/docs/catalog-import.md).
+They are permissions of their own, `catalog_products.import` and `catalog_products.export`.
 
 ## On the site
 

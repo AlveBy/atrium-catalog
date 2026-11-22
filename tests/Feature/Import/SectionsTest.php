@@ -134,6 +134,17 @@ final class SectionsTest extends TestCase
         $this->assertSame(5, CatalogSection::query()->count());
     }
 
+    public function test_a_check_tells_the_same_new_name_under_two_parents_apart(): void
+    {
+        $import = $this->import(['create_sections' => true]);
+        $sections = new Sections($import, true);
+
+        $sections->find('Одежда / Зимние');
+        $sections->find('Обувь / Зимние');
+
+        $this->assertSame(2, $import->sections);
+    }
+
     /**
      * @param  array<string,mixed>  $options
      */

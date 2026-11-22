@@ -143,6 +143,25 @@ final class ImagesTest extends TestCase
         $this->assertProblem('The image address is not valid: http://exa mple.com/1.jpg', 'http://exa mple.com/1.jpg');
     }
 
+    public function test_an_address_inside_a_path_is_a_path(): void
+    {
+        $this->assertProblem('There is no image /upload/https://example.com/1.jpg on the site.', '/upload/https://example.com/1.jpg');
+    }
+
+    public function test_a_scheme_in_capitals_is_refused_too(): void
+    {
+        $this->assertProblem('The image path is not allowed: FILE:/etc/1.jpg', 'FILE:/etc/1.jpg');
+    }
+
+    public function test_an_image_without_redirects_is_asked_for_once(): void
+    {
+        Http::fake(['example.com/*' => Http::response(base64_decode(self::GIF))]);
+
+        $this->images()->one('https://example.com/1.gif');
+
+        Http::assertSentCount(1);
+    }
+
     public function test_a_check_downloads_nothing(): void
     {
         $this->assertSame('HTTPS://example.com/1.jpg', $this->images(check: true)->one('HTTPS://example.com/1.jpg'));

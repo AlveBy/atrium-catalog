@@ -11,7 +11,6 @@ namespace Atrium\Catalog\Tests\Feature;
 
 use Atrium\Admin\Fields\DisplayField;
 use Atrium\Admin\Fields\Field;
-use Atrium\Catalog\Models\CatalogImport;
 use Atrium\Catalog\Models\CatalogSection;
 use Atrium\Catalog\Models\Product;
 use Atrium\Catalog\Tests\TestCase;
@@ -41,7 +40,7 @@ final class ModelsTest extends TestCase
     public function test_the_relations_and_the_form_tabs_are_public_api(): void
     {
         // Model::__call hides a protected relation, so visibility is read as declared.
-        foreach ([[CatalogSection::class, 'parent'], [Product::class, 'section'], [Product::class, 'getAdminTabs'], [CatalogImport::class, 'directory']] as [$class, $method]) {
+        foreach ([[CatalogSection::class, 'parent'], [Product::class, 'section'], [Product::class, 'getAdminTabs']] as [$class, $method]) {
             $this->assertTrue((new \ReflectionMethod($class, $method))->isPublic(), "{$class}::{$method}");
         }
     }

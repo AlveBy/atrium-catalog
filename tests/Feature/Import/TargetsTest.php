@@ -48,15 +48,44 @@ final class TargetsTest extends TestCase
             'Наименование',   // a synonym
             'Артикул',        // the Russian label
             'Price',          // the English label
-            'Цена, руб.',     // the price again: taken already
-            'external_id',    // the key itself
+            'Цена',           // the price again: taken already
+            'released_on',    // the key itself
             'Категория',      // a synonym of the section
             'Something else',
             '',
         ]);
 
-        $this->assertSame(['name', 'article', 'price', null, 'external_id', 'section', null, null], $mapping);
+        $this->assertSame(['name', 'article', 'price', null, 'released_on', 'section', null, null], $mapping);
         $this->assertSame('de', app()->getLocale());
+    }
+
+    public function test_the_targets_are_worked_out_once(): void
+    {
+        $calls = 0;
+        Hook::filter('atrium.module.fields', static function (array $fields) use (&$calls): array {
+            $calls++;
+
+            return $fields;
+        });
+        $targets = app(Targets::class);
+
+        $targets->all();
+        $targets->get('name');
+        $targets->options();
+
+        $this->assertSame(1, $calls);
+    }
+
+    public function test_what_comes_first_wins_a_header_two_targets_answer_to(): void
+    {
+        Hook::filter('atrium.module.fields', static fn (array $fields): array => [
+            ...$fields,
+            TextField::make('alt_name')->label('Name'),   // a label after the same label
+            TextField::make('legacy')->label('Article'),  // a label before the same key
+            TextField::make('stock_code')->label('SKU'),  // a label before the same synonym
+        ]);
+
+        $this->assertSame(['name', 'legacy', 'stock_code'], app(Targets::class)->guess(['Name', 'Article', 'SKU']));
     }
 
     public function test_a_field_kept_per_language_takes_a_column_per_language(): void
@@ -78,6 +107,16 @@ final class TargetsTest extends TestCase
         $this->assertSame(['name.ru'], $targets->guess(['Name (Русский)']));
         $this->assertSame(['name.ru'], $targets->guess(['Название (Русский)']));
         $this->assertSame([null], $targets->guess(['Название (Deutsch)']));
+    }
+
+    public function test_the_first_of_two_fields_kept_per_language_with_one_label_takes_the_bare_label(): void
+    {
+        Language::query()->create(['code' => 'ru', 'name' => 'Русский', 'active' => true, 'is_default' => false, 'sort' => 2]);
+        app(ContentLanguages::class)->flush();
+        Hook::filter('atrium.module.fields', static fn (array $fields): array => [...$fields, TextField::make('alt_name')->label('Name')]);
+        Hook::filter('atrium.module.translatable', static fn (array $names, string $model): array => $model === Product::class ? [...$names, 'name', 'alt_name'] : $names);
+
+        $this->assertSame(['name.en'], app(Targets::class)->guess(['Name']));
     }
 
     public function test_one_language_needs_no_language_in_the_name(): void

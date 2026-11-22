@@ -109,7 +109,7 @@ final class CellsTest extends TestCase
         $this->assertSame(['red', 'green', 'light blue', 'black'], Cells::items(" red | green\r\nlight blue\n\n|black| "));
         $this->assertSame(['a, b'], Cells::items('a, b'));
         $this->assertSame([], Cells::items(' | '));
-        $this->assertSame(['a', 'b'], Cells::items('a||b'));
+        $this->assertSame(['a', 'b'], Cells::items('a| |b'));
     }
 
     public function test_addresses_also_by_commas_semicolons_and_spaces(): void

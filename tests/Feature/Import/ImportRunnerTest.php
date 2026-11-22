@@ -113,6 +113,15 @@ final class ImportRunnerTest extends TestCase
         $this->assertTrue(Cache::lock('atrium-catalog-import:'.$import->id, 10)->get());
     }
 
+    public function test_the_lock_outlives_the_step_by_a_minute(): void
+    {
+        $import = $this->import(CatalogImport::CHECKED, 2);
+        $lock = Cache::lock('another', 80);
+        Cache::partialMock()->shouldReceive('lock')->once()->with('atrium-catalog-import:'.$import->id, 80)->andReturn($lock);
+
+        $this->assertFalse($this->runner()->step($import, 20));
+    }
+
     public function test_an_import_that_is_not_running_is_not_moved(): void
     {
         $import = $this->import(CatalogImport::CHECKED, 2);

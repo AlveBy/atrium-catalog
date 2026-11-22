@@ -26,6 +26,8 @@ final class CatalogImportTest extends TestCase
         $import = $this->import(['file' => 'a.csv']);
 
         $this->assertSame('/var/imports', CatalogImport::directory());
+        // Model::__callStatic would reach a protected one too, so visibility is read as declared.
+        $this->assertTrue((new \ReflectionMethod(CatalogImport::class, 'directory'))->isPublic());
         $this->assertSame('/var/imports/a.csv', $import->path());
     }
 

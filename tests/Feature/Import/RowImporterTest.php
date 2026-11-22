@@ -377,6 +377,16 @@ final class RowImporterTest extends TestCase
         $this->assertSame(0, Product::query()->count());
     }
 
+    public function test_a_check_takes_a_field_kept_per_language_from_its_one_column(): void
+    {
+        Hook::filter('atrium.module.translatable', static fn (array $names, string $model): array => $model === Product::class ? [...$names, 'name'] : $names);
+        $import = $this->import(['article', 'name'], [], CatalogImport::CHECKING);
+
+        $this->importer($import)->import(2, ['A-1', 'Parka']);
+
+        $this->assertSame([[], 1], [$import->errors, $import->created]);
+    }
+
     public function test_a_check_finds_the_reasons_the_form_would_give(): void
     {
         $this->product(['article' => 'A-1', 'name' => 'Parka']);

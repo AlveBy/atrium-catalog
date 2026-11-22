@@ -89,10 +89,20 @@ final class SourceFileTest extends TestCase
     public function test_a_letter_cut_by_the_sample_does_not_make_utf8_look_like_windows_1251(): void
     {
         // The 64 KB sample ends inside the two bytes of "ж".
-        $line = str_repeat('a', 65534)."ж\n";
+        $line = str_repeat('a', 65530)."ж\n";
 
         $this->assertSame('UTF-8', $this->normalize("Name\n".$line)['encoding']);
         $this->assertSame('UTF-8', $this->normalize(substr("Name\n".$line, 0, 65536)."\n")['encoding']);
+    }
+
+    public function test_a_nul_in_the_first_4_kb_means_not_a_text_file(): void
+    {
+        $this->assertSame(1, $this->normalize("Name\n".str_repeat('a', 4091)."\0\n")['total']);
+
+        $this->expectException(ImportFailed::class);
+        $this->expectExceptionMessage('This is not a CSV or Excel (xlsx) file.');
+
+        $this->normalize("Name\n".str_repeat('a', 4090)."\0\n");
     }
 
     public function test_empty_rows_are_left_out_and_cells_trimmed_and_numbered_as_in_the_file(): void

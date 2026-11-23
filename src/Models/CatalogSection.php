@@ -92,7 +92,7 @@ class CatalogSection extends Model implements Administrable, Cacheable
             TreeSelectField::make('parent_id')->label(__('atrium::fields.standard.parent_section'))->model(self::class),
             NumberField::make('sort')->label(__('atrium::fields.standard.sort'))->default(500),
             ImageField::make('picture')->label(__('atrium::fields.standard.picture'))->directory('catalog'),
-            ContentField::make('description')->label(__('atrium::fields.standard.description')),
+            ContentField::make('description')->label(__('atrium::fields.standard.description'))->ai(),
         ];
     }
 

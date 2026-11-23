@@ -55,10 +55,11 @@ final class DemoShopTest extends TestCase
             }
         }
 
-        // The menus module's form shows these two: a tree of items with links.
-        $elsewhere = ['tree', 'link'];
+        // The menus module's form shows these two: a tree of items with links;
+        // the forms module's form builds its fields.
+        $elsewhere = ['tree', 'link', 'formBuilder'];
 
-        $this->assertCount(23, $all);
+        $this->assertCount(24, $all);
         $this->assertSame([], array_values(array_diff($all, $used, $elsewhere)));
     }
 

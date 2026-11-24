@@ -48,5 +48,11 @@ return [
     'settings' => [
         'per_page' => 'Sayfa başına ürün',
         'per_page_hint' => 'Bu sitede bir katalog bölümünün sayfasında kaç ürün gösterileceği. Boş: temanın varsayılanı.',
+        'market_name' => 'Yandex Market için mağaza adı',
+        'market_name_hint' => 'Yandex Market\'in göstereceği kısa ad, en çok 20 karakter. Boşsa: sitenin adı.',
+        'market_company' => 'Şirket',
+        'market_company_hint' => 'Satıcı şirketin tam adı. Boşsa: sitenin adı.',
+        'market_currency' => 'Fiyatların para birimi',
+        'market_currency_hint' => 'Ürün fiyatlarının hangi para biriminde olduğu. Yandex Market RUB, BYN, KZT, UAH, USD ve EUR kabul eder.',
     ],
 ];

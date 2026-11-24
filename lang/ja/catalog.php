@@ -48,5 +48,11 @@ return [
     'settings' => [
         'per_page' => '1ページの商品数',
         'per_page_hint' => 'このサイトでカタログのセクションの1ページに表示する商品の数です。空欄の場合はテーマの既定値です。',
+        'market_name' => 'Yandex Market 用のショップ名',
+        'market_name_hint' => 'Yandex Market に表示される短い名前（20 文字まで）。空欄の場合はサイト名。',
+        'market_company' => '会社名',
+        'market_company_hint' => '販売する会社の正式名称。空欄の場合はサイト名。',
+        'market_currency' => '価格の通貨',
+        'market_currency_hint' => '商品価格の通貨。Yandex Market は RUB、BYN、KZT、UAH、USD、EUR に対応しています。',
     ],
 ];

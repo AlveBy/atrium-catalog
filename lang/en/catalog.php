@@ -51,5 +51,11 @@ return [
     'settings' => [
         'per_page' => 'Products per page',
         'per_page_hint' => 'How many products a page of a catalog section shows on this site. Empty: the theme\'s default.',
+        'market_name' => 'Shop name for Yandex Market',
+        'market_name_hint' => 'The short name Yandex Market shows, up to 20 characters. Empty: the site name.',
+        'market_company' => 'Company',
+        'market_company_hint' => 'The full name of the company that sells. Empty: the site name.',
+        'market_currency' => 'Currency of the prices',
+        'market_currency_hint' => 'The currency the product prices are in. Yandex Market takes RUB, BYN, KZT, UAH, USD and EUR.',
     ],
 ];

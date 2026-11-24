@@ -48,5 +48,11 @@ return [
     'settings' => [
         'per_page' => '每页商品数',
         'per_page_hint' => '本站目录分区每页显示的商品数量。留空则使用主题的默认值。',
+        'market_name' => 'Yandex Market 的店铺名称',
+        'market_name_hint' => 'Yandex Market 显示的简称，最多 20 个字符。留空则使用站点名称。',
+        'market_company' => '公司',
+        'market_company_hint' => '销售公司的全称。留空则使用站点名称。',
+        'market_currency' => '价格币种',
+        'market_currency_hint' => '商品价格所用的币种。Yandex Market 接受 RUB、BYN、KZT、UAH、USD 和 EUR。',
     ],
 ];

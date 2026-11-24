@@ -48,5 +48,11 @@ return [
     'settings' => [
         'per_page' => 'Produits par page',
         'per_page_hint' => 'Combien de produits une page de rubrique du catalogue affiche sur ce site. Vide : la valeur par défaut du thème.',
+        'market_name' => 'Nom de la boutique pour Yandex Market',
+        'market_name_hint' => 'Le nom court affiché par Yandex Market, 20 caractères au plus. Vide : le nom du site.',
+        'market_company' => 'Société',
+        'market_company_hint' => 'Le nom complet de la société qui vend. Vide : le nom du site.',
+        'market_currency' => 'Devise des prix',
+        'market_currency_hint' => 'La devise des prix des produits. Yandex Market accepte RUB, BYN, KZT, UAH, USD et EUR.',
     ],
 ];

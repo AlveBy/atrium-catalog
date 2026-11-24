@@ -48,4 +48,36 @@ final class CatalogSettingsTest extends TestCase
             ->put('/admin/modules/catalog/settings', ['per_page' => 500])
             ->assertSessionHasErrors('per_page');
     }
+
+    public function test_the_shop_for_yandex_market_is_set_in_the_panel(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin, 'admin')
+            ->get('/admin/modules/catalog/settings')
+            ->assertOk()
+            ->assertSee('Shop name for Yandex Market')
+            ->assertSee('Currency of the prices');
+
+        foreach ([
+            'market_name' => str_repeat('a', 21),
+            'market_company' => str_repeat('a', 256),
+            'market_currency' => 'GBP',
+        ] as $field => $value) {
+            $this->actingAs($admin, 'admin')
+                ->put('/admin/modules/catalog/settings', [$field => $value, 'market_currency' => $field === 'market_currency' ? $value : 'RUB'])
+                ->assertSessionHasErrors($field);
+        }
+
+        $this->actingAs($admin, 'admin')
+            ->put('/admin/modules/catalog/settings', ['market_currency' => ''])
+            ->assertSessionHasNoErrors();
+
+        $this->actingAs($admin, 'admin')
+            ->put('/admin/modules/catalog/settings', ['market_name' => str_repeat('a', 20), 'market_company' => 'Aero Trading LLC', 'market_currency' => 'KZT'])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame('KZT', Setting::get('catalog.market_currency', null, app(Sites::class)->default()));
+        $this->assertSame(str_repeat('a', 20), Setting::get('catalog.market_name', null, app(Sites::class)->default()));
+    }
 }

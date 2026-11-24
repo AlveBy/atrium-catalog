@@ -48,5 +48,11 @@ return [
     'settings' => [
         'per_page' => 'Sahifadagi mahsulotlar',
         'per_page_hint' => 'Ushbu saytda katalog bo‘limining sahifasi nechta mahsulot ko‘rsatadi. Bo‘sh: mavzuning standart qiymati.',
+        'market_name' => 'Yandex Market uchun do‘kon nomi',
+        'market_name_hint' => 'Yandex Market ko‘rsatadigan qisqa nom, 20 belgigacha. Bo‘sh bo‘lsa — saytning nomi.',
+        'market_company' => 'Kompaniya',
+        'market_company_hint' => 'Sotuvchi kompaniyaning to‘liq nomi. Bo‘sh bo‘lsa — saytning nomi.',
+        'market_currency' => 'Narxlar valyutasi',
+        'market_currency_hint' => 'Mahsulot narxlari qaysi valyutada ko‘rsatilgan. Yandex Market RUB, BYN, KZT, UAH, USD va EUR ni qabul qiladi.',
     ],
 ];

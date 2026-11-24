@@ -55,7 +55,8 @@ final class ProductExportTest extends ProductTransferTestCase
         $rows = $this->read($path);
 
         $this->assertSame(self::HEADER, array_slice(array_keys($rows[0]), 0, 24));
-        $this->assertSame(36, count($rows[0]));
+        // The module's own columns and the Template the theme offers every page.
+        $this->assertSame(37, count($rows[0]));
         // The default order of the list: by sort.
         $this->assertSame(['Boots', self::FORMULA, 'Parka'], array_column($rows, 'Name'));
         $this->assertSame([

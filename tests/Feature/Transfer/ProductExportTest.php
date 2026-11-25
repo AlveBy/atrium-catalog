@@ -22,7 +22,7 @@ final class ProductExportTest extends ProductTransferTestCase
     private const FORMULA = "'=SUM(1+1)";
 
     private const HEADER = [
-        'ID', 'Active', 'Active from', 'Active until', 'Name', 'Code', 'Sort', 'Article number', 'External ID', 'Price', 'Brand', 'Label',
+        'ID', 'Active', 'Publish at', 'Unpublish at', 'Active from', 'Active until', 'Name', 'Code', 'Sort', 'Article number', 'External ID', 'Price', 'Brand', 'Label',
         'Colours', 'Released', 'In stock', 'Features', 'Preview picture', 'Preview text', 'Detail picture', 'Detail text', 'Specifications',
         'In the box', 'Photos', 'Section',
     ];
@@ -54,18 +54,18 @@ final class ProductExportTest extends ProductTransferTestCase
 
         $rows = $this->read($path);
 
-        $this->assertSame(self::HEADER, array_slice(array_keys($rows[0]), 0, 24));
+        $this->assertSame(self::HEADER, array_slice(array_keys($rows[0]), 0, 26));
         // The module's own columns and the Template the theme offers every page.
-        $this->assertSame(37, count($rows[0]));
+        $this->assertSame(39, count($rows[0]));
         // The default order of the list: by sort.
         $this->assertSame(['Boots', self::FORMULA, 'Parka'], array_column($rows, 'Name'));
         $this->assertSame([
-            'ID' => '1', 'Active' => '1', 'Active from' => '2026-01-02 08:30:00', 'Active until' => '', 'Name' => 'Parka', 'Code' => 'parka', 'Sort' => '30',
+            'ID' => '1', 'Active' => '1', 'Publish at' => '', 'Unpublish at' => '', 'Active from' => '2026-01-02 08:30:00', 'Active until' => '', 'Name' => 'Parka', 'Code' => 'parka', 'Sort' => '30',
             'Article number' => 'A-1', 'External ID' => 'ext-1', 'Price' => '1299.50', 'Brand' => '', 'Label' => 'hit', 'Colours' => 'black|silver',
             'Released' => '2026-03-05', 'In stock' => '1', 'Features' => 'Warm|Light', 'Preview picture' => 'catalog/1.jpg', 'Preview text' => '',
             'Detail picture' => '', 'Detail text' => '', 'Specifications' => '', 'In the box' => 'Box', 'Photos' => 'catalog/1.jpg|catalog/2.jpg',
             'Section' => 'Одежда / Куртки',
-        ], array_slice($rows[2], 0, 24, true));
+        ], array_slice($rows[2], 0, 26, true));
         $this->assertSame(['2', '0', 'Boots', '90.00', 'Одежда'], [$rows[0]['ID'], $rows[0]['Active'], $rows[0]['Name'], $rows[0]['Price'], $rows[0]['Section']]);
         $this->assertSame('', $rows[1]['Section']);
     }

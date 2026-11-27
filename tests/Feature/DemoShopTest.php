@@ -57,10 +57,11 @@ final class DemoShopTest extends TestCase
 
         // The menus module's form shows these two: a tree of items with links;
         // the forms module's form builds its fields; the administrator's form
-        // has the roles on each site.
-        $elsewhere = ['tree', 'link', 'formBuilder', 'siteRoles'];
+        // has the roles on each site; the pages module's form builds a page of
+        // blocks.
+        $elsewhere = ['tree', 'link', 'formBuilder', 'siteRoles', 'layout'];
 
-        $this->assertCount(25, $all);
+        $this->assertCount(26, $all);
         $this->assertSame([], array_values(array_diff($all, $used, $elsewhere)));
     }
 
